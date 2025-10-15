@@ -1,0 +1,22 @@
+{
+  "name": "Dashboard de Operações",
+  "short_name": "Dashboard",
+  "description": "Dashboard de controle de operações, estoque e logística.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f4f7f9",
+  "theme_color": "#34495e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

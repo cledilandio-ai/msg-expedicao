@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="./">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#34495e"/>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Dashboard de Operações</title>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Dashboard de Operações</h1>
+            <div id="update-status-bar">
+                <span>Última Atualização: <span id="last-update-date">Carregando...</span></span>
+                <button id="update-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path fill="currentColor" d="M463.5 224H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5z"/></svg>
+                    <span class="btn-text">Atualizar</span>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <div class="details-section">
+                <h2>Gráfico: Liberado vs. Falta Produzir</h2>
+                <div class="chart-container">
+                    <canvas id="producaoChart"></canvas>
+                </div>
+            </div>
+
+            <div class="kpi-pair-grid">
+                <div class="card"><div class="card-title">TOTAL SERRAMIL LIBERADO</div><div class="card-value loading" id="kpiValue1">...</div></div>
+                <div class="card"><div class="card-title">FALTA PRODUZIR SERRAMIL</div><div class="card-value loading" id="kpiValue6">...</div></div>
+            </div>
+            <div class="kpi-pair-grid">
+                <div class="card"><div class="card-title">TOTAL FLOCÃO LIBERADO</div><div class="card-value loading" id="kpiValue2">...</div></div>
+                <div class="card"><div class="card-title">FALTA PRODUZIR FLOCÃO</div><div class="card-value loading" id="kpiValue7">...</div></div>
+            </div>
+            <div class="kpi-pair-grid">
+                <div class="card"><div class="card-title">ESTOQUE DE MILHO</div><div class="card-value loading" id="kpiValue5">...</div></div>
+                <div class="card"><div class="card-title">COMPRAR MILHO (FALTANTE)</div><div class="card-value loading" id="kpiValue8">...</div></div>
+            </div>
+            
+            <div class="details-section">
+                <h2>Estoques de Produto Acabado</h2>
+                <div class="kpi-pair-grid">
+                    <div class="card"><div class="card-title">ESTOQUE SERRAMIL</div><div class="card-value loading" id="kpiValue3">...</div></div>
+                    <div class="card"><div class="card-title">ESTOQUE FLOCÃO</div><div class="card-value loading" id="kpiValue4">...</div></div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h2>Controle de Estoque de Café</h2>
+                <div class="kpi-pair-grid">
+                    <div class="card"><div class="card-title">ESTOQUE DE CAFÉ</div><div class="card-value loading" id="kpiValue10">...</div></div>
+                    <div class="card"><div class="card-title">TOTAL LIBERADO CAFÉ</div><div class="card-value loading" id="kpiValue11">...</div></div>
+                </div>
+                <div class="kpi-pair-grid">
+                    <div class="card"><div class="card-title">SALDO DE CAFÉ</div><div class="card-value loading" id="kpiValue12">...</div></div>
+                    <a href="https://daschecafe.netlify.app/" target="_blank" class="card link-card">
+                        <div class="card-title">ABRIR DASHBOARD</div>
+                        <div class="card-value">Dash Café</div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h2>Logística e Atrasos Recentes</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Data Prevista</th><th>Motorista</th><th>Rota</th><th>Peso</th><th>Vencimento</th><th>DIAS RESTANTES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logisticaTableBody">
+                        <tr><td colspan="6" class="loading">Buscando dados logísticos...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script src="script.js" defer></script>
+</body>
+</html>
