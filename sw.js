@@ -1,5 +1,5 @@
 // ✅ MUDE A VERSÃO A CADA NOVO DEPLOY!
-const STATIC_CACHE_NAME = 'unificado-cache-v2';
+const STATIC_CACHE_NAME = 'unificado-cache-v3';
 const DATA_CACHE_NAME = 'data-cache-v1';
 
 const FILES_TO_CACHE = [
@@ -62,4 +62,5 @@ self.addEventListener('fetch', (evt) => {
       return response || fetch(evt.request);
     })
   );
+
 });
