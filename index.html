@@ -12,6 +12,11 @@
 </head>
 <body>
     <div class="dashboard-container">
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link active">Operações</a>
+            <a href="cafe.html" class="nav-link">Café</a>
+        </nav>
+
         <header>
             <h1>Dashboard de Operações</h1>
             <div id="update-status-bar">
@@ -30,7 +35,6 @@
                     <canvas id="producaoChart"></canvas>
                 </div>
             </div>
-
             <div class="kpi-pair-grid">
                 <div class="card"><div class="card-title">TOTAL SERRAMIL LIBERADO</div><div class="card-value loading" id="kpiValue1">...</div></div>
                 <div class="card"><div class="card-title">FALTA PRODUZIR SERRAMIL</div><div class="card-value loading" id="kpiValue6">...</div></div>
@@ -43,7 +47,6 @@
                 <div class="card"><div class="card-title">ESTOQUE DE MILHO</div><div class="card-value loading" id="kpiValue5">...</div></div>
                 <div class="card"><div class="card-title">COMPRAR MILHO (FALTANTE)</div><div class="card-value loading" id="kpiValue8">...</div></div>
             </div>
-            
             <div class="details-section">
                 <h2>Estoques de Produto Acabado</h2>
                 <div class="kpi-pair-grid">
@@ -51,7 +54,6 @@
                     <div class="card"><div class="card-title">ESTOQUE FLOCÃO</div><div class="card-value loading" id="kpiValue4">...</div></div>
                 </div>
             </div>
-
             <div class="details-section">
                 <h2>Controle de Estoque de Café</h2>
                 <div class="kpi-pair-grid">
@@ -60,20 +62,17 @@
                 </div>
                 <div class="kpi-pair-grid">
                     <div class="card"><div class="card-title">SALDO DE CAFÉ</div><div class="card-value loading" id="kpiValue12">...</div></div>
-                    <a href="https://daschecafe.netlify.app/" target="_blank" class="card link-card">
+                    <a href="cafe.html" class="card link-card">
                         <div class="card-title">ABRIR DASHBOARD</div>
                         <div class="card-value">Dash Café</div>
                     </a>
                 </div>
             </div>
-
             <div class="details-section">
                 <h2>Logística e Atrasos Recentes</h2>
                 <table class="data-table">
                     <thead>
-                        <tr>
-                            <th>Data Prevista</th><th>Motorista</th><th>Rota</th><th>Peso</th><th>Vencimento</th><th>DIAS RESTANTES</th>
-                        </tr>
+                        <tr><th>Data Prevista</th><th>Motorista</th><th>Rota</th><th>Peso</th><th>Vencimento</th><th>DIAS RESTANTES</th></tr>
                     </thead>
                     <tbody id="logisticaTableBody">
                         <tr><td colspan="6" class="loading">Buscando dados logísticos...</td></tr>
@@ -82,6 +81,6 @@
             </div>
         </main>
     </div>
-    <script src="script.js" defer></script>
+    <script src="operacao.js" defer></script>
 </body>
 </html>
