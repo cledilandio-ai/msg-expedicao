@@ -4,7 +4,7 @@
 
 const CONFIG = {
     csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vShhn4owra2uDPiFvdJQ4YnVE3tfvqEksVPK8aYl81IyYWMI-N2h6cr_nfXrv-6Y7uPNMRAkWIhARyC/pub?gid=862076930&single=true&output=tsv',
-    saldoTrabalho: { linha: 13, coluna: 0 },
+    saldoTrabalho: { linha: 14, coluna: 0 },
     produtos: {
         'sg-250':   { nome: 'SG 250g', estoque: { linha: 4, coluna: 2 }, vendido: { linha: 4, coluna: 1 } },
         'sg-500':   { nome: 'SG 500g', estoque: { linha: 6, coluna: 2 }, vendido: { linha: 6, coluna: 1 } },
@@ -143,4 +143,5 @@ document.addEventListener('DOMContentLoaded', () => {
           .catch(err => console.error('Falha ao registrar Service Worker:', err));
       });
     }
+
 });
