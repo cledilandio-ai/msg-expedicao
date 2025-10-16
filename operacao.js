@@ -2,23 +2,23 @@
 // SCRIPT COMPLETO PARA A PÁGINA DE OPERAÇÕES (index.html)
 // ===================================================================
 
+// --- URLs das Planilhas e Seletores de Elementos ---
 const CSV_URL_KPI = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vShhn4owra2uDPiFvdJQ4YnVE3tfvqEksVPK8aYl81IyYWMI-N2h6cr_nfXrv-6Y7uPNMRAkWIhARyC/pub?gid=669209740&single=true&output=tsv';
 const CSV_URL_LOGISTICA = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vShhn4owra2uDPiFvdJQ4YnVE3tfvqEksVPK8aYl81IyYWMI-N2h6cr_nfXrv-6Y7uPNMRAkWIhARyC/pub?gid=861790825&single=true&output=tsv'; 
 const updateButton = document.getElementById('update-btn');
 const updateButtonText = updateButton.querySelector('.btn-text');
-let producaoChart = null; 
+let producaoChart = null; // Variável global para o gráfico, para que ele possa ser atualizado
 
-function parseCSV(text) {
-    const rows = text.split('\n').filter(row => row.trim() !== '');
-    return rows.map(row => row.split('\t').map(cell => cell.trim().replace(/"/g, '')));
-}
-function cleanNumber(str) {
-    if (!str) return 0;
-    return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
-}
+// --- Funções Específicas da Página ---
+
+/**
+ * Função: checkUpdateStatus
+ * Objetivo: Verifica a data na planilha e mostra se o dashboard está atualizado ou desatualizado.
+ * @param {string} dateString - A data vinda da planilha (ex: "15/10").
+ */
 function checkUpdateStatus(dateString) {
     const dateElement = document.getElementById('last-update-date');
-    const statusContainer = document.getElementById('update-status-bar');
+    const statusContainer = document.getElementById('status-text-container'); 
     const oldIndicator = statusContainer.querySelector('.status-indicator');
     if (oldIndicator) oldIndicator.remove();
     if (!dateString) { dateElement.textContent = "Data não encontrada."; return; }
@@ -41,6 +41,13 @@ function checkUpdateStatus(dateString) {
     }
     statusContainer.appendChild(statusIndicator);
 }
+
+/**
+ * Função: calculateDaysRemaining
+ * Objetivo: Calcula a diferença em dias entre uma data e o dia de hoje.
+ * @param {string} dateString - A data de vencimento (ex: "25/12").
+ * @returns {number|string} - O número de dias restantes ou uma string de status.
+ */
 function calculateDaysRemaining(dateString) {
     if (!dateString || typeof dateString !== 'string' || dateString.length < 3) return "N/D";
     const currentYear = new Date().getFullYear();
@@ -68,6 +75,13 @@ function calculateDaysRemaining(dateString) {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
+/**
+ * Função: createOrUpdateChart
+ * Objetivo: Cria ou atualiza o gráfico de barras da página.
+ * @param {Array<string>} labels - Os nomes para o eixo X (ex: ['Serramil', 'Flocão']).
+ * @param {Array<number>} liberadoData - Os dados para a primeira barra.
+ * @param {Array<number>} faltaProduzirData - Os dados para a segunda barra.
+ */
 function createOrUpdateChart(labels, liberadoData, faltaProduzirData) {
     const ctx = document.getElementById('producaoChart').getContext('2d');
     const data = {
@@ -98,6 +112,82 @@ function createOrUpdateChart(labels, liberadoData, faltaProduzirData) {
     }
 }
 
+/**
+ * Funções auxiliares para formatar e colorir os KPIs.
+ */
+function updateKpiComprarMilho(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = Math.round(value).toLocaleString('pt-BR');
+    el.classList.remove('status-low', 'status-ok');
+    if (value > 1) el.classList.add('status-ok'); 
+    else el.classList.add('status-low'); 
+}
+function updateCalculatedKpi(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('status-low', 'status-ok');
+    el.textContent = `${Math.round(value).toLocaleString('pt-BR')} kg`;
+    if (value < 0) el.classList.add('status-low');
+    else el.classList.add('status-ok'); 
+}
+
+/**
+ * Função: updateLogisticsTable
+ * Objetivo: Constrói a tabela de logística com os dados da planilha.
+ */
+function updateLogisticsTable(data, startRowIndex, maxRows) {
+    const tbody = document.getElementById('logisticaTableBody');
+    tbody.innerHTML = ''; 
+    const endIndex = Math.min(startRowIndex + maxRows, data.length);
+    for (let i = startRowIndex; i < endIndex; i++) {
+        const row = data[i];
+        if (!row || row.length < 1) continue;
+        const dataPrevista = row[5] || 'N/D';
+        let motorista = row[11] || 'N/D';
+        let motoristaClass = '';
+        if (motorista === 'N/D' || motorista.trim() === '') {
+            motorista = 'Ainda não designado';
+            motoristaClass = 'status-low';
+        } else {
+            motoristaClass = 'status-ok';
+        }
+        const rota = row[6] || 'N/D';
+        const pesoValue = row[8] ? cleanNumber(row[8]) : 0;
+        const peso = pesoValue ? `${Math.round(pesoValue).toLocaleString('pt-BR')} kg` : 'N/D';
+        const dataVencimento = row[13] || 'N/D';
+        const diasRestantes = calculateDaysRemaining(dataVencimento);
+        let diasTexto, diasClass;
+        if (diasRestantes === "N/D" || diasRestantes === "Inválida") {
+             diasTexto = diasRestantes;
+             diasClass = '';
+        } else if (diasRestantes < 0) { 
+            diasTexto = Math.abs(diasRestantes) + " dias ATRASO";
+            diasClass = 'status-low';
+        } else if (diasRestantes < 30) {
+            diasTexto = diasRestantes + " dias";
+            diasClass = 'status-low';
+        } else {
+            diasTexto = diasRestantes + " dias";
+            diasClass = 'status-ok';
+        }
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td data-label="Data Prevista">${dataPrevista}</td>
+            <td data-label="Motorista" class="${motoristaClass}">${motorista}</td>
+            <td data-label="Rota">${rota}</td>
+            <td data-label="Peso">${peso}</td>
+            <td data-label="Vencimento">${dataVencimento}</td>
+            <td data-label="Dias Restantes" class="${diasClass}">${diasTexto}</td>
+        `;
+        tbody.appendChild(tr);
+    }
+    if (tbody.innerHTML === '') {
+         tbody.innerHTML = `<tr><td colspan="6" data-label="Aviso" class="status-low">Não há dados de Logística.</td></tr>`;
+    }
+}
+
+// --- Função Principal de Execução ---
 async function fetchAndUpdateDashboard() {
     updateButton.disabled = true;
     updateButton.classList.add('updating');
@@ -106,6 +196,11 @@ async function fetchAndUpdateDashboard() {
         const [responseKPI, responseLogistica] = await Promise.all([ fetch(CSV_URL_KPI), fetch(CSV_URL_LOGISTICA) ]);
         const dataKPI = parseCSV(await responseKPI.text()); 
         const dataLogistica = parseCSV(await responseLogistica.text()); 
+
+        // ✅ LINHAS DE DIAGNÓSTICO (MANTIDAS E COMENTADAS)
+        // console.log('🔬 Dados de KPI:', dataKPI);
+        // console.log('🚚 Dados de Logística:', dataLogistica);
+        
         if (dataKPI.length < 2) throw new Error("CSV de KPIs vazio.");
         const lastUpdateDateString = dataKPI[0]?.[0] || null;
         checkUpdateStatus(lastUpdateDateString);
@@ -150,77 +245,15 @@ async function fetchAndUpdateDashboard() {
         updateButtonText.textContent = 'Atualizar';
     }
 }
-function updateKpiComprarMilho(id, value) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = Math.round(value).toLocaleString('pt-BR');
-    el.classList.remove('status-low', 'status-ok');
-    if (value > 1) el.classList.add('status-ok'); 
-    else el.classList.add('status-low'); 
-}
-function updateCalculatedKpi(id, value) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('status-low', 'status-ok');
-    el.textContent = `${Math.round(value).toLocaleString('pt-BR')} kg`;
-    if (value < 0) el.classList.add('status-low');
-    else el.classList.add('status-ok'); 
-}
-function updateLogisticsTable(data, startRowIndex, maxRows) {
-    const tbody = document.getElementById('logisticaTableBody');
-    tbody.innerHTML = ''; 
-    const endIndex = Math.min(startRowIndex + maxRows, data.length);
-    for (let i = startRowIndex; i < endIndex; i++) {
-        const row = data[i];
-        if (!row || row.length < 1) continue;
-        const dataPrevista = row[5] || 'N/D';
-        let motorista = row[11] || 'N/D';
-        let motoristaClass = '';
-        if (motorista === 'N/D') {
-            motorista = 'Ainda não designado';
-            motoristaClass = 'status-low';
-        }
-        const rota = row[6] || 'N/D';
-        const pesoValue = row[8] ? cleanNumber(row[8]) : 0;
-        const peso = pesoValue ? `${Math.round(pesoValue).toLocaleString('pt-BR')} kg` : 'N/D';
-        const dataVencimento = row[13] || 'N/D';
-        const diasRestantes = calculateDaysRemaining(dataVencimento);
-        let diasTexto, diasClass;
-        if (diasRestantes === "N/D" || diasRestantes === "Inválida") {
-             diasTexto = diasRestantes;
-             diasClass = '';
-        } else if (diasRestantes < 0) { 
-            diasTexto = Math.abs(diasRestantes) + " dias ATRASO";
-            diasClass = 'status-low';
-        } else if (diasRestantes < 30) {
-            diasTexto = diasRestantes + " dias";
-            diasClass = 'status-low';
-        } else {
-            diasTexto = diasRestantes + " dias";
-            diasClass = 'status-ok';
-        }
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td data-label="Data Prevista">${dataPrevista}</td>
-            <td data-label="Motorista" class="${motoristaClass}">${motorista}</td>
-            <td data-label="Rota">${rota}</td>
-            <td data-label="Peso">${peso}</td>
-            <td data-label="Vencimento">${dataVencimento}</td>
-            <td data-label="Dias Restantes" class="${diasClass}">${diasTexto}</td>
-        `;
-        tbody.appendChild(tr);
-    }
-    if (tbody.innerHTML === '') {
-         tbody.innerHTML = `<tr><td colspan="6" data-label="Aviso" class="status-low">Não há dados de Logística.</td></tr>`;
-    }
-}
+
+// --- Ponto de Entrada do Aplicativo ---
 document.addEventListener('DOMContentLoaded', () => {
     updateButton.addEventListener('click', fetchAndUpdateDashboard);
     fetchAndUpdateDashboard();
     setInterval(fetchAndUpdateDashboard, 300000); 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
+        navigator.serviceWorker.register('./sw.js')
           .then(reg => console.log('Service Worker registrado.'))
           .catch(err => console.error('Falha ao registrar SW:', err));
       });

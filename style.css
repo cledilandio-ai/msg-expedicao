@@ -38,16 +38,84 @@ main h2 { color: #3498db; margin-top: 30px; margin-bottom: 15px; }
 .card-secondary-value { font-size: 16px; font-weight: bold; color: #7f8c8d; margin-top: 10px; }
 .card-secondary-value::before { content: "Nº de Bateladas: "; font-weight: normal; }
 .card-secondary-value.loading::before { content: ""; }
-.data-table { width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
-.data-table th, .data-table td { padding: 15px; text-align: left; border-bottom: 1px solid #ecf0f1; }
-.data-table th { background-color: #34495e; color: #ffffff; font-weight: 600; text-transform: uppercase; font-size: 12px; }
-@media (max-width: 768px) {
-    .data-table thead { display: none; }
-    .data-table tr { display: block; border: 1px solid #ecf0f1; border-radius: 8px; margin-bottom: 15px; padding: 10px; }
-    .data-table td { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; text-align: right; border-bottom: 1px dotted #ccc; }
-    .data-table td:last-child { border-bottom: none; }
-    .data-table td::before { content: attr(data-label); font-weight: bold; text-align: left; margin-right: 10px; color: #34495e; }
+.data-table { width: 100%; border-collapse: collapse; } /* Simplificado */
+.data-table th, .data-table td { text-align: left; border-bottom: 1px solid #ecf0f1; }
+.data-table th { background-color: #34495e; color: #ffffff; font-weight: 600; text-transform: uppercase; font-size: 12px; padding: 15px; }
+
+/* ✅ ESTILOS RESTAURADOS PARA O STATUS DE ATUALIZAÇÃO */
+#update-status-bar {
+    align-items: flex-start; /* Alinha os itens no topo */
 }
+#status-text-container {
+    display: flex;
+    flex-direction: column; /* Faz o status ficar embaixo da data */
+    gap: 5px;
+    font-weight: bold;
+}
+#update-status-bar .status-indicator {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    align-self: flex-start; /* Garante que a tag não estique */
+}
+.status-updated {
+    background-color: #27ae60; /* Verde */
+}
+.status-outdated {
+    background-color: #e74c3c; /* Vermelho */
+}
+
+/* ✅ MEDIA QUERY PARA RESPONSIVIDADE (TABLETS E CELULARES) */
+@media (max-width: 768px) {
+    /* Esconde o cabeçalho da tabela tradicional */
+    .data-table thead {
+        display: none;
+    }
+    
+    /* Reseta o comportamento da tabela para que ela seja apenas um container */
+    .data-table, .data-table tbody {
+        display: block;
+        width: 100%;
+    }
+    
+    /* Transforma cada linha (TR) em um card completo */
+    .data-table tr { 
+        display: block; 
+        background-color: #ffffff;
+        border-radius: 8px; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        padding: 15px; 
+        margin-bottom: 15px; 
+    }
+    
+    /* Organiza cada célula (TD) para mostrar o label e o valor */
+    .data-table td { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 10px 5px; 
+        text-align: right; 
+        border-bottom: 1px dotted #ccc; 
+    }
+
+    .data-table td:last-child {
+        border-bottom: none;
+    }
+    
+    /* Cria o "label" (título da coluna) antes de cada dado */
+    .data-table td::before { 
+        content: attr(data-label); 
+        font-weight: bold; 
+        text-align: left; 
+        margin-right: 10px; 
+        color: #34495e; 
+    }
+}
+
+/* Estilos para telas maiores (Desktop) */
 @media (min-width: 769px) {
     body { padding: 20px; }
     h1 { font-size: 28px; }
