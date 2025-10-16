@@ -6,7 +6,7 @@
 
 // MUDE A VERSÃO A CADA NOVO DEPLOY! (ex: v2, v3, v4...)
 // Isso força o navegador a baixar os novos arquivos do aplicativo.
-const STATIC_CACHE_NAME = 'unificado-cache-v5'; 
+const STATIC_CACHE_NAME = 'unificado-cache-v6'; 
 
 // Nome do cache para os dados das planilhas. Não precisa mudar.
 const DATA_CACHE_NAME = 'data-cache-v1';
@@ -94,4 +94,5 @@ self.addEventListener('fetch', (evt) => {
       return response || fetch(evt.request);
     })
   );
+
 });
